@@ -1,0 +1,108 @@
+#!/usr/bin/env ruby
+# Copyright (c) 2023 Yegor Bugayenko
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+STDOUT.sync = true
+
+require 'slop'
+require 'loog'
+require 'backtrace'
+require_relative '../lib/damsi/version'
+require_relative '../lib/damsi/dfg'
+
+loog = Loog::REGULAR
+
+def config(path)
+  f = File.expand_path(path)
+  args = []
+  args += File.readlines(f).map(&:strip).reject { |a| a.empty? } if File.exist?(f)
+  args
+end
+
+args = config('~/.damsi') + config('.damsi') + ARGV
+
+opts = Slop.parse(args, strict: true, help: true) do |o|
+  o.banner = "Usage (#{Damsi::VERSION}): damsi [options]"
+  o.bool '-h', '--help', 'Show these instructions'
+  o.bool '--version', 'Show current version'
+  o.bool '--verbose', 'Print as much log messages as possible'
+end
+
+if opts.help?
+  puts opts
+  exit
+end
+
+if opts.verbose?
+  loog = Loog::VERBOSE
+end
+
+if opts.version?
+  loog.info(Fief::VERSION)
+  exit
+end
+
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
+
+begin
+  Damsi::DFG.new(
+    '
+    send :sum, a:10
+    send :sum, b:15
+    recv :sum do |a, b|
+      send :mul, x: (a+b)
+    end
+    recv :mul do |x|
+      send :out, x: x
+    end
+    '
+  ).simulate
+  loog.debug('Done')
+rescue StandardError => e
+  loog.error(Backtrace.new(e))
+  exit -1
+end
+
+# send :fibo, n:5
+# send :if, f:1
+# recv :fibo do |c|
+#   send :gt, n:c[:n]
+#   send :dec1, n:c[:n]
+#   send :dec2, n:c[:n]
+#   send :sum, a:c[:n]  # if tagged
+#   send :sum, b:c[:n]  # if tagged right
+# end
+# recv :if do |c|
+#   if c[:c]
+#     send :fibo, n:c[:t]
+#   else
+#     send :fibo, n:c[:f]
+#   end
+# end
+# recv :sum do |c|
+#   send :if, t:(c[:a] + c[:b])
+# end
+# recv :dec1 do |c|
+#   send :fibo, n:(c[:n]-1)
+# end
+# recv :dec2 do |c|
+#   send :fibo, n:(c[:n]-2)
+# end
