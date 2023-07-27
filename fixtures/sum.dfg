@@ -1,0 +1,8 @@
+send :sum, a:10
+send :sum, b:15
+recv :sum do |a, b|
+  send :mul, x: (a+b)
+end
+recv :mul do |x|
+  send :out, x: x
+end

@@ -39,7 +39,7 @@ end
 args = config('~/.damsi') + config('.damsi') + ARGV
 
 opts = Slop.parse(args, strict: true, help: true) do |o|
-  o.banner = "Usage (#{Damsi::VERSION}): damsi [options]"
+  o.banner = "Usage (#{Damsi::VERSION}): damsi [options] <file>"
   o.bool '-h', '--help', 'Show these instructions'
   o.bool '--version', 'Show current version'
   o.bool '--verbose', 'Print as much log messages as possible'
@@ -63,7 +63,9 @@ Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
 
 begin
-  Damsi::DFG.new('').simulate(loog)
+  input = opts.arguments[0]
+  raise 'File name is required' if input.nil?
+  Damsi::DFG.new(File.read(input)).simulate(loog)
 rescue StandardError => e
   loog.error(Backtrace.new(e))
   exit -1

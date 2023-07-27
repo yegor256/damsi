@@ -22,7 +22,7 @@ Feature: Simple Reporting
       send :out, x: x
     end
     """
-    When I run bin/damsi
-    Then Stdout contains "sum to 25"
+    When I run bin/damsi simple.dfg
+    Then Stdout contains "mul called with [25]"
     And Exit code is zero
 
