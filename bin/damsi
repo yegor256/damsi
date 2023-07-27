@@ -55,7 +55,7 @@ if opts.verbose?
 end
 
 if opts.version?
-  loog.info(Fief::VERSION)
+  loog.info(Damsi::VERSION)
   exit
 end
 
@@ -63,19 +63,7 @@ Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
 
 begin
-  Damsi::DFG.new(
-    '
-    send :sum, a:10
-    send :sum, b:15
-    recv :sum do |a, b|
-      send :mul, x: (a+b)
-    end
-    recv :mul do |x|
-      send :out, x: x
-    end
-    '
-  ).simulate
-  loog.debug('Done')
+  Damsi::DFG.new('').simulate(loog)
 rescue StandardError => e
   loog.error(Backtrace.new(e))
   exit -1

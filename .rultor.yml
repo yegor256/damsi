@@ -9,10 +9,10 @@ release:
   script: |-
     bundle exec rake
     rm -rf *.gem
-    sed -i "s/0\.0\.0/${tag}/g" lib/fief/version.rb
-    git add lib/fief/version.rb
+    sed -i "s/0\.0\.0/${tag}/g" lib/damsi/version.rb
+    git add lib/damsi/version.rb
     git commit -m "version set to ${tag}"
-    gem build fief.gemspec
+    gem build damsi.gemspec
     chmod 0600 ../rubygems.yml
     gem push *.gem --config-file ../rubygems.yml
 merge:

@@ -63,7 +63,7 @@ require 'xcop/rake_task'
 Xcop::RakeTask.new(:xcop) do |task|
   task.license = 'LICENSE.txt'
   task.includes = ['**/*.xml', '**/*.xsl', '**/*.xsd', '**/*.html']
-  task.excludes = ['fief/**', 'coverage/**']
+  task.excludes = ['damsi/**', 'coverage/**']
 end
 
 require 'cucumber/rake/task'
