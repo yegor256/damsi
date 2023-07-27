@@ -22,7 +22,7 @@ require 'English'
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require_relative './lib/damsi/version'
+require_relative 'lib/damsi/version'
 
 Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
