@@ -27,9 +27,11 @@ class Damsi::Ticks
     @ticks = {}
   end
 
-  def push(tick, msg)
+  # Add a message in properly formatted LaTeX. If the TeX syntax
+  # is broken, there will be a runtime problem later.
+  def push(tick, tex)
     @ticks[tick] = [] if @ticks[tick].nil?
-    @ticks[tick].push(msg)
+    @ticks[tick].push(tex)
   end
 
   def to_latex(log)
