@@ -25,8 +25,9 @@ require_relative 'ticks'
 # Copyright:: Copyright (c) 2023 Yegor Bugayenko
 # License:: MIT
 class Damsi::DFG
-  def initialize(prog)
+  def initialize(prog, log)
     @prog = prog
+    @log = log
     @cells = {}
     @ops = {}
     @ticks = Damsi::Ticks.new
@@ -42,6 +43,7 @@ class Damsi::DFG
     args.each do |k, a|
       @cells[vtx][k] = a
       @ticks.push(@tick, "\\texttt{#{a}} $\\to$ \\texttt{#{vtx}\\textbar{}1.#{k}}")
+      @log.debug("#{@tick}| #{a} -> #{vtx}.#{k}")
     end
   end
 
@@ -50,7 +52,7 @@ class Damsi::DFG
   end
 
   # Returns an instance of +Ticks+.
-  def simulate(log)
+  def simulate
     # rubocop:disable Security/Eval
     eval(@prog)
     # rubocop:enable Security/Eval
@@ -61,15 +63,23 @@ class Damsi::DFG
       before.each do |v, c|
         next if @ops[v].nil?
         blk = @ops[v]
-        reqs = blk.parameters.select { |p| p[0] == :opt }
-        args = reqs.map { |p| c[p[1]] }.compact
-        next if args.size < reqs.size
-        blk.call(*args)
-        log.debug("#{@tick}: #{v} called with #{args}")
+        reqs = blk.parameters.select { |p| p[0] == :opt }.map { |p| p[1] }
+        args = reqs.map { |r| [r, c[r]] }.to_h
+        bound = args.map { |p| p[1] }.compact
+        if bound.size < args.size
+          @log.debug("#{@tick}| :#{v}(#{reqs.join(', ')}) is not ready to start with #{args}")
+          next
+        end
+        @log.debug("#{@tick}| :#{v} starts with #{args} ...")
+        blk.call(*bound)
+        @log.debug("#{@tick}| :#{v} finished")
         execs += 1
         @cells.delete(v)
       end
-      break if execs.zero?
+      if execs.zero?
+        @log.debug("#{@tick}| no executions at #{before.count} operators, we stop here:\n#{before}")
+        break
+      end
       @tick += 1
       raise 'Ran out of ticks' if @tick > 100
     end

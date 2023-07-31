@@ -42,10 +42,45 @@ class TestDFG < Minitest::Test
       recv :mul do |x|
         send :stop, x: x
       end
-      '
+      ',
+      Loog::NULL
     )
-    ticks = dfg.simulate(Loog::NULL)
+    ticks = dfg.simulate
     assert_equal(25, dfg.cell(:stop)[:x])
+    tex = TeX.new
+    ticks.to_latex(tex)
+    tex.to_pdf(path: '/tmp/damsi.pdf')
+  end
+
+  def test_prng
+    dfg = Damsi::DFG.new(
+      '
+      recv :start do
+        send :last, d:17
+        send :seq, k:0
+      end
+      recv :seq do |k|
+        send :next1, k:1
+      end
+      recv :last do |d|
+        send :next1, d:d
+        send :next2, d:d
+      end
+      recv :next1 do |k, d|
+        n = d + 1
+        send :last, d:n
+        send :next2, k:2
+      end
+      recv :next2 do |k, d|
+        n = d + 1
+        send :last, d:n
+        send :stop, x:n
+      end
+      ',
+      Loog::VERBOSE
+    )
+    ticks = dfg.simulate
+    # assert_equal(25, dfg.cell(:stop)[:x])
     tex = TeX.new
     ticks.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf')
