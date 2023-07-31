@@ -42,7 +42,7 @@ class Damsi::DFG
     @cells[vtx] = {} if @cells[vtx].nil?
     args.each do |k, a|
       @cells[vtx][k] = a
-      @ticks.push(@tick, "\\texttt{#{a}} $\\to$ \\texttt{#{vtx}\\textbar{}1.#{k}}")
+      @ticks.push(@tick, "\\texttt{#{a}} $\\to$ \\texttt{#{vtx}.#{k}}")
       @log.debug("#{@tick}| #{a} -> #{vtx}.#{k}")
     end
   end

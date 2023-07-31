@@ -55,32 +55,40 @@ class TestDFG < Minitest::Test
   def test_prng
     dfg = Damsi::DFG.new(
       '
+      @data = 17
+      def next_random(n)
+        (n * n) / 16 & 0xffff
+      end
       recv :start do
-        send :last, d:17
-        send :seq, k:0
+        send :read1, k:1
       end
-      recv :seq do |k|
-        send :next1, k:1
+      recv :read1 do |k|
+        send :next1, d:@data
       end
-      recv :last do |d|
-        send :next1, d:d
-        send :next2, d:d
+      recv :next1 do |d|
+        n = next_random(d)
+        send :write1, d:n
       end
-      recv :next1 do |k, d|
-        n = d + 1
-        send :last, d:n
-        send :next2, k:2
+      recv :write1 do |d|
+        @data = d
+        send :read2, k:1
       end
-      recv :next2 do |k, d|
-        n = d + 1
-        send :last, d:n
-        send :stop, x:n
+      recv :read2 do |k|
+        send :next2, d:@data
+      end
+      recv :next2 do |d|
+        n = next_random(d)
+        send :write2, d:n
+        send :seq, d:n
+      end
+      recv :seq do |d|
+        send :stop, x:d
       end
       ',
       Loog::VERBOSE
     )
     ticks = dfg.simulate
-    # assert_equal(25, dfg.cell(:stop)[:x])
+    assert_equal(20, dfg.cell(:stop)[:x])
     tex = TeX.new
     ticks.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf')
