@@ -1,0 +1,25 @@
+send :fibo, n:5
+send :if, f:1
+recv :fibo do |n|
+  send :gt, n:n
+  send :dec1, n:n
+  send :dec2, n:n
+  send :sum, a:n  # if tagged
+  send :sum, b:n  # if tagged right
+end
+recv :if do |c, t, f|
+  if c
+    send :fibo, n:t
+  else
+    send :fibo, n:f
+  end
+end
+recv :sum do |a, b|
+  send :if, t:(a + b)
+end
+recv :dec1 do |n|
+  send :fibo, n:(n-1)
+end
+recv :dec2 do |c|
+  send :fibo, n:(n-2)
+end

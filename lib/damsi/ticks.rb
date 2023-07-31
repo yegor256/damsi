@@ -18,57 +18,37 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative 'ticks'
-
-# Dataflow Graph (DFG)
+# Ticks accumulated after the evaluation of a DFG.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2023 Yegor Bugayenko
 # License:: MIT
-class Damsi::DFG
-  def initialize(prog)
-    @prog = prog
-    @cells = {}
-    @ops = {}
+class Damsi::Ticks
+  def initialize
+    @ticks = {}
   end
 
-  def cell(vtx)
-    @cells[vtx]
+  def push(tick, msg)
+    @ticks[tick] = [] if @ticks[tick].nil?
+    @ticks[tick].push(msg)
   end
 
-  def send(vtx, args)
-    @cells[vtx] = {} if @cells[vtx].nil?
-    args.each { |k, a| @cells[vtx][k] = a }
-  end
-
-  def recv(vtx, &block)
-    @ops[vtx] = block
-  end
-
-  # Returns an instance of +Ticks+.
-  def simulate(log)
-    # rubocop:disable Security/Eval
-    eval(@prog)
-    # rubocop:enable Security/Eval
-    ticks = Damsi::Ticks.new
-    tick = 0
-    loop do
-      execs = 0
-      before = @cells.clone
-      before.each do |v, c|
-        next if @ops[v].nil?
-        blk = @ops[v]
-        reqs = blk.parameters.select { |p| p[0] == :opt }
-        args = reqs.map { |p| c[p[1]] }.compact
-        next if args.size < reqs.size
-        blk.call(*args)
-        log.debug("#{tick}: #{v} called with #{args}")
-        execs += 1
-        @cells.delete(v)
-      end
-      break if execs.zero?
-      tick += 1
-      raise 'Ran out of ticks' if tick > 100
+  def to_latex(log)
+    total = @ticks.count
+    if total.zero?
+      log.info('no ticks')
+      return
     end
-    ticks
+    log.info("\\begin{tabular}{#{'l' * total}}")
+    pos = 0
+    @ticks.each do |n, t|
+      log.info("#{'&' * pos} \\multicolumn{#{total - pos}}{l}{\\begin{tabular}{|l}")
+      t.each do |e|
+        log.info(e)
+        log.info('\\\\')
+      end
+      log.info('\\end{tabular}} \\\\')
+      pos += 1
+    end
+    log.info('\\end{tabular}')
   end
 end

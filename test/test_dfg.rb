@@ -20,13 +20,15 @@
 
 require 'minitest/autorun'
 require 'loog'
+require_relative 'tex'
 require_relative '../lib/damsi/dfg'
+require_relative '../lib/damsi/ticks'
 
-# Test for DfG.
+# Test for DFG.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2023 Yegor Bugayenko
 # License:: MIT
-class TestRepos < Minitest::Test
+class TestDFG < Minitest::Test
   def test_primitive_summator
     dfg = Damsi::DFG.new(
       '
@@ -39,7 +41,11 @@ class TestRepos < Minitest::Test
         send :out, x: x
       end
       '
-    ).simulate(Loog::NULL)
-    assert dfg.cell(:out)[:x] == 25
+    )
+    ticks = dfg.simulate(Loog::NULL)
+    assert_equal(25, dfg.cell(:out)[:x])
+    tex = TeX.new
+    ticks.to_latex(tex)
+    tex.to_pdf(path: '/tmp/damsi.pdf')
   end
 end

@@ -18,57 +18,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require_relative 'ticks'
+require 'loog'
 
-# Dataflow Graph (DFG)
+# TeX accumulated through a log.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2023 Yegor Bugayenko
 # License:: MIT
-class Damsi::DFG
-  def initialize(prog)
-    @prog = prog
-    @cells = {}
-    @ops = {}
-  end
-
-  def cell(vtx)
-    @cells[vtx]
-  end
-
-  def send(vtx, args)
-    @cells[vtx] = {} if @cells[vtx].nil?
-    args.each { |k, a| @cells[vtx][k] = a }
-  end
-
-  def recv(vtx, &block)
-    @ops[vtx] = block
-  end
-
-  # Returns an instance of +Ticks+.
-  def simulate(log)
-    # rubocop:disable Security/Eval
-    eval(@prog)
-    # rubocop:enable Security/Eval
-    ticks = Damsi::Ticks.new
-    tick = 0
-    loop do
-      execs = 0
-      before = @cells.clone
-      before.each do |v, c|
-        next if @ops[v].nil?
-        blk = @ops[v]
-        reqs = blk.parameters.select { |p| p[0] == :opt }
-        args = reqs.map { |p| c[p[1]] }.compact
-        next if args.size < reqs.size
-        blk.call(*args)
-        log.debug("#{tick}: #{v} called with #{args}")
-        execs += 1
-        @cells.delete(v)
-      end
-      break if execs.zero?
-      tick += 1
-      raise 'Ran out of ticks' if tick > 100
+class TeX < Loog::Buffer
+  # Makes a PDF at the provided path, returns nothing
+  def to_pdf(path: '/tmp/damsi.pdf')
+    Dir.mktmpdir do |dir|
+      name = 'paper.tex'
+      tex = File.join(dir, name)
+      body = "\\documentclass{article}\\begin{document}#{to_s}\\end{document}"
+      File.write(tex, body)
+      cmd = "set -x && cd #{dir} && ls -al && pdflatex -shell-escape -halt-on-error #{name} 2>&1"
+      system(cmd)
+      pdf = File.join(dir, 'paper.pdf')
+      raise "The PDF was not generated at #{pdf}" unless File.exist?(pdf)
+      FileUtils.copy(pdf, path)
     end
-    ticks
   end
 end

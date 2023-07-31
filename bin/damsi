@@ -42,7 +42,6 @@ opts = Slop.parse(args, strict: true, help: true) do |o|
   o.banner = "Usage (#{Damsi::VERSION}): damsi [options] <file>"
   o.bool '-h', '--help', 'Show these instructions'
   o.bool '--version', 'Show current version'
-  o.bool '--verbose', 'Print as much log messages as possible'
 end
 
 if opts.help?
@@ -50,14 +49,19 @@ if opts.help?
   exit
 end
 
-if opts.verbose?
-  loog = Loog::VERBOSE
-end
-
 if opts.version?
   loog.info(Damsi::VERSION)
   exit
 end
+
+tex = Class.new do
+  def info(msg)
+    puts msg
+  end
+  def debug(msg)
+    puts '% ' + msg
+  end
+end.new
 
 Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
@@ -65,34 +69,8 @@ Encoding.default_internal = Encoding::UTF_8
 begin
   input = opts.arguments[0]
   raise 'File name is required' if input.nil?
-  Damsi::DFG.new(File.read(input)).simulate(loog)
+  Damsi::DFG.new(File.read(input)).simulate(tex)
 rescue StandardError => e
   loog.error(Backtrace.new(e))
   exit -1
 end
-
-# send :fibo, n:5
-# send :if, f:1
-# recv :fibo do |c|
-#   send :gt, n:c[:n]
-#   send :dec1, n:c[:n]
-#   send :dec2, n:c[:n]
-#   send :sum, a:c[:n]  # if tagged
-#   send :sum, b:c[:n]  # if tagged right
-# end
-# recv :if do |c|
-#   if c[:c]
-#     send :fibo, n:c[:t]
-#   else
-#     send :fibo, n:c[:f]
-#   end
-# end
-# recv :sum do |c|
-#   send :if, t:(c[:a] + c[:b])
-# end
-# recv :dec1 do |c|
-#   send :fibo, n:(c[:n]-1)
-# end
-# recv :dec2 do |c|
-#   send :fibo, n:(c[:n]-2)
-# end
