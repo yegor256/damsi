@@ -30,7 +30,7 @@ class TeX < Loog::Buffer
     Dir.mktmpdir do |dir|
       name = 'paper.tex'
       tex = File.join(dir, name)
-      body = "\\documentclass{article}\\begin{document}#{to_s}\\end{document}"
+      body = "\\documentclass{article}\\usepackage[T1]{fontenc}\\begin{document}#{self}\\end{document}"
       File.write(tex, body)
       cmd = "set -x && cd #{dir} && ls -al && pdflatex -shell-escape -halt-on-error #{name} 2>&1"
       system(cmd)

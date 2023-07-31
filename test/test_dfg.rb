@@ -32,18 +32,20 @@ class TestDFG < Minitest::Test
   def test_primitive_summator
     dfg = Damsi::DFG.new(
       '
-      send :sum, a:10
-      send :sum, b:15
+      recv :start do
+        send :sum, a:10
+        send :sum, b:15
+      end
       recv :sum do |a, b|
         send :mul, x: (a+b)
       end
       recv :mul do |x|
-        send :out, x: x
+        send :stop, x: x
       end
       '
     )
     ticks = dfg.simulate(Loog::NULL)
-    assert_equal(25, dfg.cell(:out)[:x])
+    assert_equal(25, dfg.cell(:stop)[:x])
     tex = TeX.new
     ticks.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf')

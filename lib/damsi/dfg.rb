@@ -29,6 +29,8 @@ class Damsi::DFG
     @prog = prog
     @cells = {}
     @ops = {}
+    @ticks = Damsi::Ticks.new
+    @tick = 0
   end
 
   def cell(vtx)
@@ -37,7 +39,10 @@ class Damsi::DFG
 
   def send(vtx, args)
     @cells[vtx] = {} if @cells[vtx].nil?
-    args.each { |k, a| @cells[vtx][k] = a }
+    args.each do |k, a|
+      @cells[vtx][k] = a
+      @ticks.push(@tick, "\\texttt{#{a}} $\\to$ \\texttt{#{vtx}\\textbar{}1.#{k}}")
+    end
   end
 
   def recv(vtx, &block)
@@ -49,8 +54,7 @@ class Damsi::DFG
     # rubocop:disable Security/Eval
     eval(@prog)
     # rubocop:enable Security/Eval
-    ticks = Damsi::Ticks.new
-    tick = 0
+    send(:start, {})
     loop do
       execs = 0
       before = @cells.clone
@@ -61,14 +65,14 @@ class Damsi::DFG
         args = reqs.map { |p| c[p[1]] }.compact
         next if args.size < reqs.size
         blk.call(*args)
-        log.debug("#{tick}: #{v} called with #{args}")
+        log.debug("#{@tick}: #{v} called with #{args}")
         execs += 1
         @cells.delete(v)
       end
       break if execs.zero?
-      tick += 1
-      raise 'Ran out of ticks' if tick > 100
+      @tick += 1
+      raise 'Ran out of ticks' if @tick > 100
     end
-    ticks
+    @ticks
   end
 end

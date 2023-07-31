@@ -28,8 +28,8 @@ require_relative 'tex'
 class TestTeX < Minitest::Test
   def test_primitive_document
     tex = TeX.new
-    tex.info("Hello, world!")
-    tex.info("Hello, \\LaTeX!")
+    tex.info('Hello, world!')
+    tex.info('Hello, \\LaTeX!')
     Dir.mktmpdir do |dir|
       pdf = File.join(dir, 'a.pdf')
       tex.to_pdf(path: pdf)

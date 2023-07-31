@@ -40,7 +40,7 @@ class Damsi::Ticks
     end
     log.info("\\begin{tabular}{#{'l' * total}}")
     pos = 0
-    @ticks.each do |n, t|
+    @ticks.each do |_n, t|
       log.info("#{'&' * pos} \\multicolumn{#{total - pos}}{l}{\\begin{tabular}{|l}")
       t.each do |e|
         log.info(e)
