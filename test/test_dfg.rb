@@ -63,21 +63,26 @@ class TestDFG < Minitest::Test
         send :read1, k:1
       end
       recv :read1 do |k|
+        msg "Read RAM"
         send :next1, d:@data
       end
       recv :next1 do |d|
         n = next_random(d)
+        msg "Generate random"
         send :write1, d:n
       end
       recv :write1 do |d|
         @data = d
+        msg "Write to RAM"
         send :read2, k:1
       end
       recv :read2 do |k|
+        msg "Read RAM"
         send :next2, d:@data
       end
       recv :next2 do |d|
         n = next_random(d)
+        msg "Generate random"
         send :write2, d:n
         send :seq, d:n
       end

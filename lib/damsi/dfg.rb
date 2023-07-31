@@ -32,17 +32,22 @@ class Damsi::DFG
     @ops = {}
     @ticks = Damsi::Ticks.new
     @tick = 0
+    @op = nil
   end
 
   def cell(vtx)
     @cells[vtx]
   end
 
+  def msg(tex)
+    @ticks.push(@tick, "\\texttt{#{@op}}: #{tex}")
+  end
+
   def send(vtx, args)
     @cells[vtx] = {} if @cells[vtx].nil?
     args.each do |k, a|
       @cells[vtx][k] = a
-      @ticks.push(@tick, "\\texttt{#{a}} $\\to$ \\texttt{#{vtx}.#{k}}")
+      @ticks.push(@tick, "\\texttt{#{@op}}: \\texttt{#{a}} $\\to$ \\texttt{#{vtx}.#{k}}")
       @log.debug("#{@tick}| #{a} -> #{vtx}.#{k}")
     end
   end
@@ -71,6 +76,7 @@ class Damsi::DFG
           next
         end
         @log.debug("#{@tick}| :#{v} starts with #{args} ...")
+        @op = v
         blk.call(*bound)
         @log.debug("#{@tick}| :#{v} finished")
         execs += 1
