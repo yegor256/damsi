@@ -33,6 +33,7 @@ class Damsi::DFG
     @ticks = Damsi::Ticks.new
     @tick = 0
     @op = nil
+    @started = []
   end
 
   def cell(vtx)
@@ -40,14 +41,14 @@ class Damsi::DFG
   end
 
   def msg(tex)
-    @ticks.push(@tick, "\\texttt{#{@op}}: #{tex}")
+    @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: #{tex}}")
   end
 
   def send(vtx, args)
     @cells[vtx] = {} if @cells[vtx].nil?
     args.each do |k, a|
       @cells[vtx][k] = a
-      @ticks.push(@tick, "\\texttt{#{@op}}: \\texttt{#{a}} $\\to$ \\texttt{#{vtx}.#{k}}")
+      @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{a}\" → #{vtx}.#{k}}")
       @log.debug("#{@tick}| #{a} -> #{vtx}.#{k}")
     end
   end
@@ -61,7 +62,6 @@ class Damsi::DFG
     # rubocop:disable Security/Eval
     eval(@prog)
     # rubocop:enable Security/Eval
-    send(:start, {})
     loop do
       execs = 0
       before = @cells.clone
@@ -81,6 +81,17 @@ class Damsi::DFG
         @log.debug("#{@tick}| :#{v} finished")
         execs += 1
         @cells.delete(v)
+      end
+      @ops.each do |v, blk|
+        reqs = blk.parameters.select { |p| p[0] == :opt }.map { |p| p[1] }
+        next unless reqs.empty?
+        next if @started.include?(v)
+        @started.push(v)
+        @log.debug("#{@tick}| :#{v} starts empty ...")
+        @op = v
+        blk.call
+        @log.debug("#{@tick}| :#{v} finished")
+        execs += 1
       end
       if execs.zero?
         @log.debug("#{@tick}| no executions at #{before.count} operators, we stop here:\n#{before}")

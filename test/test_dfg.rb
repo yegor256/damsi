@@ -55,35 +55,32 @@ class TestDFG < Minitest::Test
   def test_prng
     dfg = Damsi::DFG.new(
       '
-      @data = 17
+      @data = 42
       def next_random(n)
         (n * n) / 16 & 0xffff
       end
-      recv :start do
-        send :read1, k:1
+      recv :r1 do
+        msg "Read #{@data} from RAM"
+        send :nxt1, d:@data
       end
-      recv :read1 do |k|
-        msg "Read RAM"
-        send :next1, d:@data
-      end
-      recv :next1 do |d|
+      recv :nxt1 do |d|
         n = next_random(d)
-        msg "Generate random"
-        send :write1, d:n
+        msg "Shift from #{d} to #{n}"
+        send :w1, d:n
       end
-      recv :write1 do |d|
+      recv :w1 do |d|
         @data = d
-        msg "Write to RAM"
-        send :read2, k:1
+        msg "Write #{d} to RAM"
+        send :r2, k:1
       end
-      recv :read2 do |k|
-        msg "Read RAM"
-        send :next2, d:@data
+      recv :r2 do |k|
+        msg "Read #{@data} from RAM"
+        send :nxt2, d:@data
       end
-      recv :next2 do |d|
+      recv :nxt2 do |d|
         n = next_random(d)
-        msg "Generate random"
-        send :write2, d:n
+        msg "Shift from #{d} to #{n}"
+        send :w2, d:n
         send :seq, d:n
       end
       recv :seq do |d|
@@ -93,7 +90,7 @@ class TestDFG < Minitest::Test
       Loog::VERBOSE
     )
     ticks = dfg.simulate
-    assert_equal(20, dfg.cell(:stop)[:x])
+    assert_equal(756, dfg.cell(:stop)[:x])
     tex = TeX.new
     ticks.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf')

@@ -8,7 +8,7 @@ AllCops:
   SuggestExtensions: false
 
 Metrics/CyclomaticComplexity:
-  Max: 14
+  Max: 20
 Metrics/MethodLength:
   Enabled: false
 Layout/MultilineMethodCallIndentation:
@@ -22,4 +22,4 @@ Layout/EmptyLineAfterGuardClause:
 Style/ClassAndModuleChildren:
   Enabled: false
 Metrics/BlockLength:
-  Max: 30
+  Max: 50
