@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: teatimeguest/setup-texlive-action@v2.6.2
+        with:
+          update-all-packages: true
+          packages: scheme-basic
       - run: pdflatex -version
       - uses: ruby/setup-ruby@v1
         with:
