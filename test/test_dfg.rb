@@ -93,6 +93,6 @@ class TestDFG < Minitest::Test
     assert_equal(756, dfg.cell(:stop)[:x])
     tex = TeX.new
     ticks.to_latex(tex)
-    tex.to_pdf(path: '/tmp/damsi.pdf')
+    tex.to_pdf(path: '/tmp/damsi.pdf', tex: '/tmp/damsi.tex')
   end
 end
