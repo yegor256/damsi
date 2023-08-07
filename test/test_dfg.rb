@@ -95,4 +95,39 @@ class TestDFG < Minitest::Test
     ticks.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf', tex: '/tmp/damsi.tex')
   end
+
+  def test_prng_optimized
+    dfg = Damsi::DFG.new(
+      '
+      @data = 42
+      def next_random(n)
+        (n * n) / 16 & 0xffff
+      end
+      recv :r1 do
+        msg "Read #{@data} from RAM"
+        send :nxt1, d:@data
+      end
+      recv :nxt1 do |d|
+        n = next_random(d)
+        msg "Shift from #{d} to #{n}"
+        send :nxt2, d:n
+      end
+      recv :nxt2 do |d|
+        n = next_random(d)
+        msg "Shift from #{d} to #{n}"
+        send :w2, d:n
+        send :seq, d:n
+      end
+      recv :seq do |d|
+        send :stop, x:d
+      end
+      ',
+      Loog::VERBOSE
+    )
+    ticks = dfg.simulate
+    assert_equal(756, dfg.cell(:stop)[:x])
+    tex = TeX.new
+    ticks.to_latex(tex)
+    tex.to_pdf(path: '/tmp/damsi.pdf', tex: '/tmp/damsi.tex')
+  end
 end
