@@ -35,7 +35,45 @@ class Damsi::DFG
     @tick = 0
     @op = nil
     @started = []
-    @advisor = Damsi::Advisor.new
+    @advisor = Damsi::Advisor.new(self, log)
+    @links = []
+    @edges = []
+  end
+
+  # Add edge (only for information).
+  def edge(arc, left, right)
+    @edges.push({ arc: arc, v1: left, v2: right })
+  end
+
+  # The edge exists?
+  def e?(arc, left, right)
+    @edges.each do |e|
+      next if !arc.nil? && e[:arc] != arc
+      next if !left.nil? && e[:v1] != left
+      next if !right.nil? && e[:v2] != right
+      return e[:arc] if arc.nil?
+      return e[:v1] if left.nil?
+      return e[:v2] if right.nil?
+      return true
+    end
+    false
+  end
+
+  # Add link to external entity, like RAM.
+  def link(vtx, ext)
+    @links.push({ vtx: vtx, ext: ext })
+  end
+
+  # The semantic of the vertex is memory related?
+  def m?(vtx, ext)
+    @links.each do |l|
+      next if !vtx.nil? && l[:vtx] != vtx
+      next if !ext.nil? && l[:ext] != ext
+      return l[:vtx] if vtx.nil?
+      return l[:ext] if ext.nil?
+      return true
+    end
+    false
   end
 
   def cell(vtx)
@@ -48,11 +86,11 @@ class Damsi::DFG
 
   # Send "data" through the "arc" to the vertex "vtx"
   def send(vtx, arc, data)
-    @advisor.redirect({ vtx: vtx, arc: arc, data: data }).each do |ic|
-      @cells[ic[:vtx]] = {} if @cells[ic[:vtx]].nil?
-      @cells[ic[:vtx]][ic[:arc]] = ic[:data]
-      @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{ic[:data]}\" → #{ic[:vtx]}.#{ic[:arc]}}")
-      @log.debug("#{@tick}| #{ic[:data]} -> #{ic[:vtx]}.#{ic[:arc]}")
+    @advisor.redirect({ v1: @op, v2: vtx, arc: arc, data: data }).each do |ic|
+      @cells[ic[:v2]] = {} if @cells[ic[:v2]].nil?
+      @cells[ic[:v2]][ic[:arc]] = ic[:data]
+      @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{ic[:data]}\" → #{ic[:v2]}.#{ic[:arc]}}")
+      @log.debug("#{@tick}| #{ic[:data]} -> #{ic[:v2]}.#{ic[:arc]}")
     end
   end
 

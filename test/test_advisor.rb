@@ -28,7 +28,8 @@ require_relative '../lib/damsi/advisor'
 # License:: MIT
 class TestAdvisor < Minitest::Test
   def test_simple_redirect
-    da = Damsi::Advisor.new
+    dfg = Damsi::DFG.new('', Loog::NULL)
+    da = Damsi::Advisor.new(dfg, Loog::NULL)
     cell = {}
     ics = da.redirect(cell)
     assert_equal(1, ics.length)

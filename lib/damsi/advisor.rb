@@ -23,13 +23,28 @@
 # Copyright:: Copyright (c) 2023 Yegor Bugayenko
 # License:: MIT
 class Damsi::Advisor
-  def initialize
-    # nothing here yet
+  def initialize(dfg, log)
+    @dfg = dfg
+    @log = log
   end
 
   # The instruction cell (IC) is coming here and the method
   # should return a possibly empty array of ICs.
   def redirect(cell)
-    [cell]
+    v1 = cell[:v1]
+    vw = cell[:v2]
+    v2 = vw
+    arc = cell[:arc]
+    data = cell[:data]
+    a = @dfg.m?(vw, nil)
+    vr = @dfg.e?(:k, vw, nil)
+    @log.debug("DA: a:#{a}, vr:#{vr}")
+    if @dfg.e?(:d, v1, vw) && @dfg.m?(vr, a)
+      v2 = @dfg.e?(:d, vr, nil)
+      @log.debug("DA: v1:#{v1}, v2:#{vw}->#{v2}, arc:#{arc}, data:#{data}")
+    else
+      @log.debug("DA: v1:#{v1}, v2:#{v2}, arc:#{arc}, data:#{data}")
+    end
+    [{ v1: v1, v2: v2, arc: arc, data: data }]
   end
 end
