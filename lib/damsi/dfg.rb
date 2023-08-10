@@ -46,13 +46,11 @@ class Damsi::DFG
     @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: #{tex}}")
   end
 
-  def send(vtx, args)
+  def send(vtx, arg, value)
     @cells[vtx] = {} if @cells[vtx].nil?
-    args.each do |k, a|
-      @cells[vtx][k] = a
-      @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{a}\" → #{vtx}.#{k}}")
-      @log.debug("#{@tick}| #{a} -> #{vtx}.#{k}")
-    end
+    @cells[vtx][arg] = value
+    @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{value}\" → #{vtx}.#{arg}}")
+    @log.debug("#{@tick}| #{value} -> #{vtx}.#{arg}")
   end
 
   def recv(vtx, &block)

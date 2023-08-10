@@ -33,14 +33,14 @@ class TestDFG < Minitest::Test
     dfg = Damsi::DFG.new(
       '
       recv :start do
-        send :sum, a:10
-        send :sum, b:15
+        send :sum, :a, 10
+        send :sum, :b, 15
       end
       recv :sum do |a, b|
-        send :mul, x: (a+b)
+        send :mul, :x, (a+b)
       end
       recv :mul do |x|
-        send :stop, x: x
+        send :stop, :x, x
       end
       ',
       Loog::NULL
@@ -61,30 +61,30 @@ class TestDFG < Minitest::Test
       end
       recv :r1 do
         msg "Read #{@data} from RAM"
-        send :nxt1, d:@data
+        send :nxt1, :d, @data
       end
       recv :nxt1 do |d|
         n = next_random(d)
         msg "Shift from #{d} to #{n}"
-        send :w1, d:n
+        send :w1, :d, n
       end
       recv :w1 do |d|
         @data = d
         msg "Write #{d} to RAM"
-        send :r2, k:1
+        send :r2, :k, 1
       end
       recv :r2 do |k|
         msg "Read #{@data} from RAM"
-        send :nxt2, d:@data
+        send :nxt2, :d, @data
       end
       recv :nxt2 do |d|
         n = next_random(d)
         msg "Shift from #{d} to #{n}"
-        send :w2, d:n
-        send :seq, d:n
+        send :w2, :d, n
+        send :seq, :d, n
       end
       recv :seq do |d|
-        send :stop, x:d
+        send :stop, :x, d
       end
       ',
       Loog::VERBOSE
@@ -105,21 +105,21 @@ class TestDFG < Minitest::Test
       end
       recv :r1 do
         msg "Read #{@data} from RAM"
-        send :nxt1, d:@data
+        send :nxt1, :d, @data
       end
       recv :nxt1 do |d|
         n = next_random(d)
         msg "Shift from #{d} to #{n}"
-        send :nxt2, d:n
+        send :nxt2, :d, n
       end
       recv :nxt2 do |d|
         n = next_random(d)
         msg "Shift from #{d} to #{n}"
-        send :w2, d:n
-        send :seq, d:n
+        send :w2, :d, n
+        send :seq, :d, n
       end
       recv :seq do |d|
-        send :stop, x:d
+        send :stop, :x, d
       end
       ',
       Loog::VERBOSE
