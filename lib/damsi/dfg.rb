@@ -19,8 +19,9 @@
 # SOFTWARE.
 
 require_relative 'ticks'
+require_relative 'advisor'
 
-# Dataflow Graph (DFG)
+# Dataflow Graph (DFG).
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
 # Copyright:: Copyright (c) 2023 Yegor Bugayenko
 # License:: MIT
@@ -34,6 +35,7 @@ class Damsi::DFG
     @tick = 0
     @op = nil
     @started = []
+    @advisor = Damsi::Advisor.new
   end
 
   def cell(vtx)
