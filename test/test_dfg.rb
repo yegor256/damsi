@@ -189,14 +189,11 @@ class TestDFG < Minitest::Test
         send :w2, :d, n
         send :seq, :d, n
       end
-      recv :seq do |d|
-        send :stop, :x, d
-      end
       ',
       Loog::VERBOSE
     )
     ticks = dfg.simulate
-    assert_equal(756, dfg.cell(:stop)[:x])
+    assert_equal(756, dfg.cell(:seq)[:d])
     tex = TeX.new
     ticks.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf', tex: '/tmp/damsi.tex')

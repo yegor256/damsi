@@ -23,8 +23,9 @@
 # Copyright:: Copyright (c) 2023 Yegor Bugayenko
 # License:: MIT
 class Damsi::Advisor
-  def initialize(dfg, log)
+  def initialize(dfg, ticks, log)
     @dfg = dfg
+    @ticks = ticks
     @log = log
   end
 
@@ -42,9 +43,12 @@ class Damsi::Advisor
     if @dfg.e?(:d, v1, vw) && @dfg.m?(vr, a)
       v2 = @dfg.e?(:d, vr, nil)
       @log.debug("DA: v1:#{v1}, v2:#{vw}->#{v2}, arc:#{arc}, data:#{data}")
+      @ticks.push(cell[:tick], "\\texttt{\\frenchspacing{}DA: #{vw}.#{arc} → #{v2}.#{arc}}")
     else
       @log.debug("DA: v1:#{v1}, v2:#{v2}, arc:#{arc}, data:#{data}")
     end
-    [{ v1: v1, v2: v2, arc: arc, data: data }]
+    after = cell
+    after[:v2] = v2
+    [after]
   end
 end

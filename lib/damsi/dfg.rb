@@ -35,7 +35,7 @@ class Damsi::DFG
     @tick = 0
     @op = nil
     @started = []
-    @advisor = Damsi::Advisor.new(self, log)
+    @advisor = Damsi::Advisor.new(self, @ticks, log)
     @links = []
     @edges = []
   end
@@ -86,7 +86,7 @@ class Damsi::DFG
 
   # Send "data" through the "arc" to the vertex "vtx"
   def send(vtx, arc, data)
-    @advisor.redirect({ v1: @op, v2: vtx, arc: arc, data: data }).each do |ic|
+    @advisor.redirect({ tick: @tick, v1: @op, v2: vtx, arc: arc, data: data }).each do |ic|
       @cells[ic[:v2]] = {} if @cells[ic[:v2]].nil?
       @cells[ic[:v2]][ic[:arc]] = ic[:data]
       @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{ic[:data]}\" → #{ic[:v2]}.#{ic[:arc]}}")
