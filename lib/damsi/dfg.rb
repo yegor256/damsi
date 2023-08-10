@@ -46,11 +46,12 @@ class Damsi::DFG
     @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: #{tex}}")
   end
 
-  def send(vtx, arg, value)
+  # Send "data" through the "arc" to the vertex "vtx"
+  def send(vtx, arc, data)
     @cells[vtx] = {} if @cells[vtx].nil?
-    @cells[vtx][arg] = value
-    @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{value}\" → #{vtx}.#{arg}}")
-    @log.debug("#{@tick}| #{value} -> #{vtx}.#{arg}")
+    @cells[vtx][arc] = data
+    @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{data}\" → #{vtx}.#{arc}}")
+    @log.debug("#{@tick}| #{data} -> #{vtx}.#{arc}")
   end
 
   def recv(vtx, &block)
