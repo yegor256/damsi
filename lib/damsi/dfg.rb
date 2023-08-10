@@ -48,10 +48,12 @@ class Damsi::DFG
 
   # Send "data" through the "arc" to the vertex "vtx"
   def send(vtx, arc, data)
-    @cells[vtx] = {} if @cells[vtx].nil?
-    @cells[vtx][arc] = data
-    @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{data}\" → #{vtx}.#{arc}}")
-    @log.debug("#{@tick}| #{data} -> #{vtx}.#{arc}")
+    @advisor.redirect({ vtx: vtx, arc: arc, data: data }).each do |ic|
+      @cells[ic[:vtx]] = {} if @cells[ic[:vtx]].nil?
+      @cells[ic[:vtx]][ic[:arc]] = ic[:data]
+      @ticks.push(@tick, "\\texttt{\\frenchspacing{}#{@op}: \"#{ic[:data]}\" → #{ic[:vtx]}.#{ic[:arc]}}")
+      @log.debug("#{@tick}| #{ic[:data]} -> #{ic[:vtx]}.#{ic[:arc]}")
+    end
   end
 
   def recv(vtx, &block)
