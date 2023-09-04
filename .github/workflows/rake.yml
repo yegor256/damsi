@@ -15,7 +15,7 @@ jobs:
         ruby: ['3.0']
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: teatimeguest/setup-texlive-action@v2.6.2
         with:
           update-all-packages: true
