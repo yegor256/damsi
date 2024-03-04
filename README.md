@@ -3,7 +3,6 @@
 
 [![rake](https://github.com/yegor256/damsi/actions/workflows/rake.yml/badge.svg)](https://github.com/yegor256/damsi/actions/workflows/rake.yml)
 [![PDD status](http://www.0pdd.com/svg?name=yegor256/damsi)](http://www.0pdd.com/p?name=yegor256/damsi)
-![Lines of code](https://img.shields.io/tokei/lines/github/yegor256/damsi)
 [![Hits-of-Code](https://hitsofcode.com/github/yegor256/damsi)](https://hitsofcode.com/view/github/yegor256/damsi)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/damsi/blob/master/LICENSE.txt)
 
