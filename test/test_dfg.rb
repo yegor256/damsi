@@ -105,6 +105,7 @@ class TestDFG < Minitest::Test
   def test_prng
     dfg = Damsi::DFG.new(
       '
+<<<<<<< Updated upstream
       @data = 42
       def next_random(n)
         (n * n) / 16 & 0xffff
@@ -232,5 +233,24 @@ class TestDFG < Minitest::Test
     tex = TeX.new
     ticks.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf', tex: '/tmp/damsi.tex')
+=======
+      recv :start do
+        send :last, x:17
+        send :main, \kappa:15
+      end
+      recv :sum do |a, b|
+        send :mul, x: (a+b)
+      end
+      recv :mul do |x|
+        send :stop, x: x
+      end
+      '
+    )
+    ticks = dfg.simulate(Loog::NULL)
+    assert_equal(25, dfg.cell(:stop)[:x])
+    tex = TeX.new
+    ticks.to_latex(tex)
+    tex.to_pdf(path: '/tmp/damsi.pdf')
+>>>>>>> Stashed changes
   end
 end

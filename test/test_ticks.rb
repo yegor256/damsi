@@ -41,6 +41,13 @@ class TestTicks < Minitest::Test
     end
   end
 
+  def test_broken_latex
+    ticks = Damsi::Ticks.new
+    ticks.push(1, '\ & # % \boom }{ ][ ><')
+    tex = TeX.new
+    ticks.to_latex(tex)
+  end
+
   def test_empty
     ticks = Damsi::Ticks.new
     tex = TeX.new
