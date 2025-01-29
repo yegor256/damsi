@@ -25,4 +25,3 @@ Feature: Simple Reporting
     When I run bin/damsi simple.dfg
     Then Stdout contains "mul called with [25]"
     And Exit code is zero
-
