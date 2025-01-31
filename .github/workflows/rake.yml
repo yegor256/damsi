@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: teatimeguest/setup-texlive-action@v3.3.0
+      - uses: teatimeguest/setup-texlive-action@v3.3.4
         with:
           update-all-packages: true
           packages: scheme-basic
