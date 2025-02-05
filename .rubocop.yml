@@ -25,7 +25,7 @@ Metrics/BlockLength:
   Max: 50
 Metrics/ClassLength:
   Max: 200
-required:
+require:
   - rubocop-rake
   - rubocop-minitest
   - rubocop-performance
