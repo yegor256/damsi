@@ -2,7 +2,10 @@
 .DS_Store
 .bundle/
 .idea/
+.yardoc/
 /damsi/
 coverage/
+doc/
+node_modules/
 rdoc/
 vendor/
