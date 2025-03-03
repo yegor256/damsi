@@ -14,7 +14,7 @@ GEM
     backtrace (0.4.0)
     bigdecimal (3.1.9)
     builder (3.3.0)
-    cucumber (9.2.0)
+    cucumber (9.2.1)
       builder (~> 3.2)
       cucumber-ci-environment (> 9, < 11)
       cucumber-core (> 13, < 14)
@@ -123,7 +123,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  cucumber (= 9.2.0)
+  cucumber (= 9.2.1)
   damsi!
   minitest (= 5.25.1)
   rake (= 13.2.1)
