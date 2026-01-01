@@ -1,9 +1,9 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025 Yegor Bugayenko
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
 # Ticks accumulated after the evaluation of a DFG.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
-# Copyright:: Copyright (c) 2023-2025 Yegor Bugayenko
+# Copyright:: Copyright (c) 2023-2026 Yegor Bugayenko
 # License:: MIT
 class Damsi::Ticks
   def initialize

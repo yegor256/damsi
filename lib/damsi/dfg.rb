@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025 Yegor Bugayenko
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
 require_relative 'ticks'
@@ -6,7 +6,7 @@ require_relative 'advisor'
 
 # Dataflow Graph (DFG).
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
-# Copyright:: Copyright (c) 2023-2025 Yegor Bugayenko
+# Copyright:: Copyright (c) 2023-2026 Yegor Bugayenko
 # License:: MIT
 class Damsi::DFG
   def initialize(prog, log)

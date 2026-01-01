@@ -1,11 +1,11 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025 Yegor Bugayenko
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
 require 'loog'
 
 # TeX accumulated through a log.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
-# Copyright:: Copyright (c) 2023-2025 Yegor Bugayenko
+# Copyright:: Copyright (c) 2023-2026 Yegor Bugayenko
 # License:: MIT
 class TeX < Loog::Buffer
   def debug(msg)

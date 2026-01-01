@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025 Yegor Bugayenko
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
 require 'minitest/autorun'
@@ -8,7 +8,7 @@ require_relative '../lib/damsi/advisor'
 
 # Test for Advisor.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
-# Copyright:: Copyright (c) 2023-2025 Yegor Bugayenko
+# Copyright:: Copyright (c) 2023-2026 Yegor Bugayenko
 # License:: MIT
 class TestAdvisor < Minitest::Test
   def test_simple_redirect
