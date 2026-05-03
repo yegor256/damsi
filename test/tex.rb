@@ -13,7 +13,7 @@ class TeX < Loog::Buffer
   end
 
   # Makes a PDF at the provided +path+, returns nothing. The TeX source
-  # will be save to the provided +tex+ location, if it's not nil.
+  # will be saved to the provided +tex+ location, if it's not nil.
   def to_pdf(path: nil, tex: nil)
     Dir.mktmpdir do |dir|
       name = 'paper.tex'
