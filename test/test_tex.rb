@@ -16,7 +16,7 @@ class TestTeX < Minitest::Test
     Dir.mktmpdir do |dir|
       pdf = File.join(dir, 'a.pdf')
       tex.to_pdf(path: pdf)
-      assert(File.exist?(pdf))
+      assert_path_exists(pdf)
     end
   end
 end

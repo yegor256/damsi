@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: Copyright (c) 2023-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-require 'minitest/autorun'
 require 'loog'
-require_relative 'tex'
+require 'minitest/autorun'
 require_relative '../lib/damsi/dfg'
 require_relative '../lib/damsi/ticks'
+require_relative 'tex'
 
 # Test for DFG.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
@@ -46,7 +46,7 @@ class TestDFG < Minitest::Test
     )
     dfg.simulate
     assert(dfg.m?(:v1, 'foo'))
-    assert(!dfg.m?(:v1, 'bar'))
+    refute(dfg.m?(:v1, 'bar'))
   end
 
   def test_links_finding_by_mask
@@ -78,17 +78,15 @@ class TestDFG < Minitest::Test
       ',
       Loog::NULL
     )
-    ticks = dfg.simulate
-    assert_equal(25, dfg.cell(:stop)[:x])
     tex = TeX.new
-    ticks.to_latex(tex)
+    dfg.simulate.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf')
+    assert_equal(25, dfg.cell(:stop)[:x])
   end
 
   def test_prng
     dfg = Damsi::DFG.new(
       '
-<<<<<<< Updated upstream
       @data = 42
       def next_random(n)
         (n * n) / 16 & 0xffff
@@ -123,11 +121,10 @@ class TestDFG < Minitest::Test
       ',
       Loog::VERBOSE
     )
-    ticks = dfg.simulate
-    assert_equal(756, dfg.cell(:stop)[:x])
     tex = TeX.new
-    ticks.to_latex(tex)
+    dfg.simulate.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf', tex: '/tmp/damsi.tex')
+    assert_equal(756, dfg.cell(:stop)[:x])
   end
 
   def test_prng_with_links
@@ -137,14 +134,12 @@ class TestDFG < Minitest::Test
       def next_random(n)
         (n * n) / 16 & 0xffff
       end
-
       edge :d, :r1, :nxt1
       edge :d, :nxt1, :w1
       edge :k, :w1, :r2
       edge :d, :r2, :nxt2
       edge :d, :nxt2, :w2
       edge :d, :nxt2, :seq
-
       link :r1, "RAM"
       recv :r1 do
         msg "Read #{@data} from RAM"
@@ -176,11 +171,10 @@ class TestDFG < Minitest::Test
       ',
       Loog::VERBOSE
     )
-    ticks = dfg.simulate
-    assert_equal(756, dfg.cell(:seq)[:d])
     tex = TeX.new
-    ticks.to_latex(tex)
+    dfg.simulate.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf', tex: '/tmp/damsi.tex')
+    assert_equal(756, dfg.cell(:seq)[:d])
   end
 
   def test_prng_optimized
@@ -211,29 +205,9 @@ class TestDFG < Minitest::Test
       ',
       Loog::VERBOSE
     )
-    ticks = dfg.simulate
-    assert_equal(756, dfg.cell(:stop)[:x])
     tex = TeX.new
-    ticks.to_latex(tex)
+    dfg.simulate.to_latex(tex)
     tex.to_pdf(path: '/tmp/damsi.pdf', tex: '/tmp/damsi.tex')
-=======
-      recv :start do
-        send :last, x:17
-        send :main, \kappa:15
-      end
-      recv :sum do |a, b|
-        send :mul, x: (a+b)
-      end
-      recv :mul do |x|
-        send :stop, x: x
-      end
-      '
-    )
-    ticks = dfg.simulate(Loog::NULL)
-    assert_equal(25, dfg.cell(:stop)[:x])
-    tex = TeX.new
-    ticks.to_latex(tex)
-    tex.to_pdf(path: '/tmp/damsi.pdf')
->>>>>>> Stashed changes
+    assert_equal(756, dfg.cell(:stop)[:x])
   end
 end

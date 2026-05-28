@@ -18,12 +18,13 @@ class TeX < Loog::Buffer
     Dir.mktmpdir do |dir|
       name = 'paper.tex'
       doc = File.join(dir, name)
-      body = "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\begin{document}\n\n#{self}\n\n\\end{document}\n"
-      File.write(doc, body)
-      cmd = "set -x && cd #{dir} && ls -al && pdflatex -shell-escape -halt-on-error #{name} 2>&1"
-      system(cmd)
+      File.write(
+        doc,
+        "\\documentclass{article}\n\\usepackage[T1]{fontenc}\n\\begin{document}\n\n#{self}\n\n\\end{document}\n"
+      )
+      system("set -x && cd #{dir} && ls -al && pdflatex -shell-escape -halt-on-error #{name} 2>&1")
       pdf = File.join(dir, 'paper.pdf')
-      raise "The PDF was not generated at #{pdf}" unless File.exist?(pdf)
+      raise(StandardError, "The PDF was not generated at #{pdf}") unless File.exist?(pdf)
       FileUtils.copy(pdf, path) unless path.nil?
       FileUtils.copy(doc, tex) unless tex.nil?
     end

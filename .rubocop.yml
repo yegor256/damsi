@@ -28,7 +28,14 @@ Metrics/BlockLength:
   Max: 50
 Metrics/ClassLength:
   Max: 200
-require:
+Elegant/ClassInModule:
+  Exclude:
+    - 'lib/**/*'
+    - '**/test_*.rb'
+    - '**/*Test.rb'
+    - 'test/tex.rb'
+plugins:
   - rubocop-rake
   - rubocop-minitest
   - rubocop-performance
+  - rubocop-elegant

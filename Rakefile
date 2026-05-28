@@ -1,10 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) 2023-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-require 'rubygems'
 require 'rake'
-require 'rdoc'
 require 'rake/clean'
+require 'rake/testtask'
+require 'rdoc'
+require 'rdoc/task'
+require 'rubocop/rake_task'
+require 'rubygems'
+require 'xcop/rake_task'
 
 def name
   @name ||= File.basename(Dir['*.gemspec'].first, '.*')
@@ -16,7 +20,6 @@ end
 
 task default: %i[clean test features rubocop xcop]
 
-require 'rake/testtask'
 desc 'Run all unit tests'
 Rake::TestTask.new(:test) do |test|
   Rake::Cleaner.cleanup_files(['coverage'])
@@ -25,7 +28,6 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = false
 end
 
-require 'rdoc/task'
 desc 'Build RDoc documentation'
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
@@ -34,22 +36,19 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-require 'rubocop/rake_task'
 desc 'Run RuboCop on all directories'
 RuboCop::RakeTask.new(:rubocop) do |task|
   task.fail_on_error = true
-  task.requires << 'rubocop-rspec'
   task.options = ['--display-cop-names']
 end
 
-require 'xcop/rake_task'
 Xcop::RakeTask.new(:xcop) do |task|
-  task.license = 'LICENSE.txt'
   task.includes = ['**/*.xml', '**/*.xsl', '**/*.xsd', '**/*.html']
   task.excludes = ['damsi/**', 'coverage/**', 'vendor/**']
 end
 
 require 'cucumber/rake/task'
+
 Cucumber::Rake::Task.new(:features) do
   Rake::Cleaner.cleanup_files(['coverage'])
 end

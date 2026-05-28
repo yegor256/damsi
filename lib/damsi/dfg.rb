@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: Copyright (c) 2023-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-require_relative 'ticks'
 require_relative 'advisor'
+require_relative 'ticks'
 
 # Dataflow Graph (DFG).
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
@@ -92,9 +92,9 @@ class Damsi::DFG
       before.each do |v, c|
         next if @ops[v].nil?
         blk = @ops[v]
-        reqs = blk.parameters.select { |p| p[0] == :opt }.map { |p| p[1] }
+        reqs = blk.parameters.filter_map { |p| p[1] if p[0] == :opt }
         args = reqs.map { |r| [r, c[r]] }.to_h
-        bound = args.map { |p| p[1] }.compact
+        bound = args.filter_map { |p| p[1] }
         if bound.size < args.size
           @log.debug("#{@tick}| :#{v}(#{reqs.join(', ')}) is not ready to start with #{args}")
           next
@@ -107,7 +107,7 @@ class Damsi::DFG
         @cells.delete(v)
       end
       @ops.each do |v, blk|
-        reqs = blk.parameters.select { |p| p[0] == :opt }.map { |p| p[1] }
+        reqs = blk.parameters.filter_map { |p| p[1] if p[0] == :opt }
         next unless reqs.empty?
         next if @started.include?(v)
         @started.push(v)
@@ -122,7 +122,7 @@ class Damsi::DFG
         break
       end
       @tick += 1
-      raise 'Ran out of ticks' if @tick > 100
+      raise(StandardError, 'Ran out of ticks') if @tick > 100
     end
     @ticks
   end

@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: Copyright (c) 2023-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-require 'minitest/autorun'
 require 'loog'
-require_relative '../lib/damsi/ticks'
+require 'minitest/autorun'
 require_relative '../lib/damsi/advisor'
+require_relative '../lib/damsi/ticks'
 
 # Test for Advisor.
 # Author:: Yegor Bugayenko (yegor256@gmail.com)
@@ -12,10 +12,9 @@ require_relative '../lib/damsi/advisor'
 # License:: MIT
 class TestAdvisor < Minitest::Test
   def test_simple_redirect
-    dfg = Damsi::DFG.new('', Loog::NULL)
-    da = Damsi::Advisor.new(dfg, Damsi::Ticks.new, Loog::NULL)
-    cell = {}
-    ics = da.redirect(cell)
-    assert_equal(1, ics.length)
+    assert_equal(
+      1,
+      Damsi::Advisor.new(Damsi::DFG.new('', Loog::NULL), Damsi::Ticks.new, Loog::NULL).redirect({}).length
+    )
   end
 end
