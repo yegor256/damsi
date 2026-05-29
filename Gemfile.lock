@@ -76,7 +76,7 @@ GEM
     racc (1.8.1)
     rainbow (3.1.1)
     rake (13.4.2)
-    rdoc (6.17.0)
+    rdoc (7.2.0)
       erb
       psych (>= 4.0.0)
       tsort
@@ -148,7 +148,7 @@ DEPENDENCIES
   damsi!
   minitest (~> 5.25)
   rake (~> 13.2)
-  rdoc (~> 6.7)
+  rdoc (~> 7.0)
   rubocop (~> 1.64)
   rubocop-elegant (~> 0.5)
   rubocop-minitest (~> 0.38)
