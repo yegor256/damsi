@@ -19,10 +19,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: teatimeguest/setup-texlive-action@v3.3.4
-        with:
-          update-all-packages: true
-          packages: scheme-basic
+      - run: sudo apt-get update
+      - run: sudo apt-get install --yes texlive-latex-base texlive-fonts-recommended
       - run: pdflatex -version
       - uses: ruby/setup-ruby@v1
         with:

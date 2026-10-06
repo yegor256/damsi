@@ -1,3 +1,5 @@
+# Dataflow Machine Simulator
+
 [![DevOps By Rultor.com](https://www.rultor.com/b/yegor256/damsi)](https://www.rultor.com/p/yegor256/damsi)
 [![We recommend RubyMine](https://www.elegantobjects.org/rubymine.svg)](https://www.jetbrains.com/ruby/)
 
@@ -10,7 +12,7 @@ It's a simulator of a dataflow machine.
 
 First, you define a dataflow graph and save it to `test.dfg`:
 
-```
+```ruby
 recv :start do
   send :sum, :a, 10
   send :sum, :b, 15
