@@ -44,7 +44,7 @@ end
 
 Xcop::RakeTask.new(:xcop) do |task|
   task.includes = ['**/*.xml', '**/*.xsl', '**/*.xsd', '**/*.html']
-  task.excludes = ['damsi/**', 'coverage/**', 'vendor/**']
+  task.excludes = ['damsi/**/*', 'coverage/**/*', 'vendor/**/*']
 end
 
 require 'cucumber/rake/task'
